@@ -22,7 +22,7 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
     from datetime import datetime, timedelta
 
     with h5py.File(in_file_name, mode='r') as f:
-        index = f['/Data_40HZ/Time/i_rec_ndx'][:]
+        record_number = f['/Data_40HZ/Time/i_rec_ndx'][:]
         timestamp = f['/Data_40HZ/DS_UTCTime_40'][:]
         
         latvar = f['/Data_40HZ/Geolocation/d_lat']
@@ -58,7 +58,7 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
         columns=['RecordNumber', 'Timestamp', 'Latitude', 'Longitude', 
                     'Elevation', 'Sat_ele_corr', 'Ele_bias_corr', 'Sat_corr_flag',
                     'Elev_use_flag', 'Geoid', 'SRTM']
-        df = pd.DataFrame(dict(zip(columns, [index, timestamp, latitude, longitude, elev, sat_ele_corr, 
+        df = pd.DataFrame(dict(zip(columns, [record_number, timestamp, latitude, longitude, elev, sat_ele_corr, 
                                                 ele_bias_corr, sat_corr_flag, elev_use_flag, geoid, srtm])))
         
         df = df[(df['Latitude']<lat_max) & (df['Latitude']>lat_min)
