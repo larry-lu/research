@@ -101,5 +101,4 @@ df = pd.DataFrame({'age': [21000, 16900, 18200, 62000, 68000, 7500], 'uncertaint
     
 fig, ax = plt.subplots(figsize=(12,8))
 camel_plot(df, ax=ax, has_blank=True, overall=True)
-
-fig.savefig('camel.png')
+fig.show()
