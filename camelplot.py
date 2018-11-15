@@ -10,14 +10,18 @@ sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
 def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
-    """This is the function used to plot the probability distribution of exposure age data. The function is inspired by Greg Balco's Matlab code (https://cosmognosis.wordpress.com/2009/07/13/matlab-code-for-camel-diagrams/)
+    """This is the function used to plot the probability distribution of exposure age data. 
+    The function is inspired by Greg Balco's Matlab code (https://cosmognosis.wordpress.com/2009/07/13/matlab-code-for-camel-diagrams/)
 
     Reference:
-    [1] Kelly, Meredith A., et al. "A 10Be chronology of lateglacial and Holocene mountain glaciation in the Scoresby Sund region, east Greenland: implications for seasonality during lateglacial time." Quaternary Science Reviews 27.25-26 (2008): 2273-2282.
+    [1] Kelly, Meredith A., et al. Quaternary Science Reviews (2008).
     [2] What is a camel diagram anyway? https://cosmognosis.wordpress.com/2011/07/25/what-is-a-camel-diagram-anyway/
     
     Arguments:
-        df {Pandas DataFrame} -- The DataFrame should contain at least 3 columns with names "age", "uncertainty", and "group". The "group" input will be used to annotate different samples. If you have a blank sample, the "group" name for the blank sample should be "blank".
+        df {Pandas DataFrame} -- The DataFrame should contain at least 3 columns with names "age", "uncertainty", and "group". 
+        The "group" input will be used to annotate different samples. 
+        If you have a blank sample, the "group" name for the blank sample should be "blank".
+        
         ax {<class 'matplotlib.axes._subplots.AxesSubplot'>} -- This allows you to define on which axis to plot the camel plot, in case the camel plot is only one among many subplots. 
     
     Keyword Arguments:
@@ -68,7 +72,8 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
         
         #add annotations
         ax1 = plt.gca()
-        ax1.text(mu*1.05, max(stats.norm.pdf(x, mu, sigma)/num_samples), group, fontsize=16, color=color[:3]) #only retrieve RGB so blank text is not too light      
+        ax1.text(mu*1.05, max(stats.norm.pdf(x, mu, sigma)/num_samples), group, fontsize=16, color=color[:3]) 
+        #only retrieve RGB so blank text is not too light      
         
     if overall == True:
         data_cache = np.array(data_cache).ravel()
@@ -97,7 +102,9 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
     ax.tick_params(labelsize=16)
 
 #test
-df = pd.DataFrame({'age': [21000, 16900, 18200, 62000, 68000, 7500], 'uncertainty':[3000, 2100, 1200, 4000, 3500, 2000], 'group':['a', 'b', 'c', 'd', 'e', 'blank']})
+df = pd.DataFrame({'age': [21000, 16900, 18200, 62000, 68000, 7500], 
+                    'uncertainty':[3000, 2100, 1200, 4000, 3500, 2000], 
+                    'group':['a', 'b', 'c', 'd', 'e', 'blank']})
     
 fig, ax = plt.subplots(figsize=(12,8))
 camel_plot(df, ax=ax, has_blank=True, overall=True)
