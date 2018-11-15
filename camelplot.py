@@ -19,10 +19,11 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
     
     Arguments:
         df {Pandas DataFrame} -- The DataFrame should contain at least 3 columns with names "age", "uncertainty", and "group". 
-        The "group" input will be used to annotate different samples. 
-        If you have a blank sample, the "group" name for the blank sample should be "blank".
+                                The "group" input will be used to annotate different samples. 
+                                If you have a blank sample, the "group" name for the blank sample should be "blank".
         
-        ax {<class 'matplotlib.axes._subplots.AxesSubplot'>} -- This allows you to define on which axis to plot the camel plot, in case the camel plot is only one among many subplots. 
+        ax {<class 'matplotlib.axes._subplots.AxesSubplot'>} -- This allows you to define on which axis to plot the camel plot, 
+                                                                in case the camel plot is only one among many subplots. 
     
     Keyword Arguments:
         has_blank {bool} -- If the input DataFrame contains a blank. (default: {False})
