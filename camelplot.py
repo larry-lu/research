@@ -46,7 +46,7 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
     else:
         df_no_blank = df
     
-    num_samples = len(df_no_blank)
+    num_samples = len(df)
     
     handles = []
     labels = []
