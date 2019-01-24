@@ -17,12 +17,13 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
     Note: The longitude in the original GLAH14 Product ranges between (0, 360). In the output file, the range of the longitude are converted to (-180, 180), with values greater than 180 represented using negative values.
     """
     import pandas as pd
+    import geopandas as gpd
     from shapely.geometry import Point
     import h5py
-    from datetime import datetime, timedelta
+    from datetime import datetime #, timedelta
 
     with h5py.File(in_file_name, mode='r') as f:
-        record_number = f['/Data_40HZ/Time/i_rec_ndx'][:]
+        index = f['/Data_40HZ/Time/i_rec_ndx'][:]
         timestamp = f['/Data_40HZ/DS_UTCTime_40'][:]
         
         latvar = f['/Data_40HZ/Geolocation/d_lat']
@@ -58,7 +59,7 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
         columns=['RecordNumber', 'Timestamp', 'Latitude', 'Longitude', 
                     'Elevation', 'Sat_ele_corr', 'Ele_bias_corr', 'Sat_corr_flag',
                     'Elev_use_flag', 'Geoid', 'SRTM']
-        df = pd.DataFrame(dict(zip(columns, [record_number, timestamp, latitude, longitude, elev, sat_ele_corr, 
+        df = pd.DataFrame(dict(zip(columns, [index, timestamp, latitude, longitude, elev, sat_ele_corr, 
                                                 ele_bias_corr, sat_corr_flag, elev_use_flag, geoid, srtm])))
         
         df = df[(df['Latitude']<lat_max) & (df['Latitude']>lat_min)
@@ -66,8 +67,8 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
             & (df['Elevation']<elev_max) & (df['Elevation']>elev_min)
         & (df['SRTM']<srtm_max) & (df['SRTM']>srtm_min)
             & (df['Sat_corr_flag']==2) & (df['Elev_use_flag']==0)]
-
-        df['Timestamp'] = base + pd.to_timedelta(df['Timestamp'], unit='s')
+        
+        df['Timestamp'] = datetime(2000, 1, 1) + pd.to_timedelta(df['Timestamp'], unit='s')
         df['Timestamp'] = df['Timestamp'].values.astype('datetime64[s]')
         df['Date'] = df['Timestamp'].dt.strftime('%Y/%m/%d')
         df['Time'] = df['Timestamp'].dt.time.values.astype(str) #converting the time to string otherwise Geopandas will raise error when exporting as .shp
@@ -77,11 +78,4 @@ def extract_elevation_from_glah14(in_file_name, out_format='csv', long_min=0.0, 
         df['Elevation_corrected'] = df['Elevation'] + df['Sat_ele_corr'] + df['Ele_bias_corr'] - df['Geoid'] - 0.7
         df = df[['RecordNumber', 'Date', 'Time', 'Latitude', 'Longitude', 'Elevation_corrected', 'SRTM']]
         
-        if out_format == 'csv':
-            df.to_csv(in_file_name.rsplit('.')[0] + '.csv')
-        else:
-            geometry = [Point(xy) for xy in zip(df['Longitude'], df['Latitude'])]
-            df = df.drop(['Longitude', 'Latitude'], axis=1)
-            crs = {'init': 'epsg:4326'}
-            gdf = gpd.GeoDataFrame(df, crs=crs, geometry=geometry)
-            gdf.to_file(driver = 'ESRI Shapefile', filename= in_file_name.rsplit('.')[0] + '.shp')
+        return df
