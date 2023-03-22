@@ -59,10 +59,10 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
         data = stats.norm.pdf(x, mu, sigma)
         
         if group == 'blank':
-            ax = ax.fill_between(x, stats.norm.pdf(x, mu, sigma)/num_samples, color='gray', label=group, alpha=0.3, zorder=1)
+            ax = ax.fill_between(x, data/num_samples, color='gray', label=group, alpha=0.3, zorder=1)
             color = ax.get_facecolor()[0] #fetch color of fill
         else:
-            ax = sns.lineplot(x, stats.norm.pdf(x, mu, sigma)/num_samples, label=group, alpha=0.7, ax=ax, zorder=2)
+            ax = sns.lineplot(x=x, y=data/num_samples, label=group, alpha=0.7, ax=ax, zorder=2)
             color = ax.get_lines()[-1].get_c() #fetch color of line
             #collect the pseudo data to be used for production of overall curve
             pseudo_data = stats.norm.rvs(size=len(x), loc=mu, scale=sigma)
@@ -73,7 +73,7 @@ def camel_plot(df, ax, has_blank=False, overall=False, axis_sci_limits=(4, -4)):
         
         #add annotations
         ax1 = plt.gca()
-        ax1.text(mu*1.05, max(stats.norm.pdf(x, mu, sigma)/num_samples), group, fontsize=16, color=color[:3]) 
+        ax1.text(mu*1.05, max(data/num_samples), group, fontsize=16, color=color[:3]) 
         #only retrieve RGB so blank text is not too light      
         
     if overall == True:
